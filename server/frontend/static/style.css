@@ -5,7 +5,7 @@ img{
 
 .card{
   border: rgb(103, 102, 105) 3px solid;
-  display: flex;  
+  display: flex;
   flex-direction: column;
   margin-left:5%;
   margin-right:5%;
@@ -14,7 +14,7 @@ img{
 }
 
 .row{
-  display: flex;  
+  display: flex;
   flex: 1;
   flex-direction: row;
   margin: auto;
@@ -122,5 +122,44 @@ img{
     color:#FFF;
     border-radius:50px;
     text-align:center;
-    box-shadow: 2px 2px 3px #999;  
+    box-shadow: 2px 2px 3px #999;
+}
+
+
+
+/* Contact */
+.header-image {
+  padding-bottom: 20px;
+}
+
+.contact-box {
+  border-radius: 50px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
+
+}
+
+.contact-section {
+  display: flex;
+  padding: 50px;
+  border: none;
+  border-top: rgb(200, 200, 200) 1px solid;
+  align-items: center;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column; /* Stack items vertically */
+  align-items: center; /* Center items horizontally */
+  text-align: center; /* Center text within each <p> */
+  margin: 0 auto; /* Center the div itself if needed, but mainly used here to ensure div is centered in its container */
+}
+
+.contact-icon {
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  border-right: 2px solid black;
+  margin-left: 10%;
+
+
 }
