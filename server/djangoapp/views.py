@@ -1,19 +1,19 @@
 # Uncomment the required imports before adding the code
 
-# from django.shortcuts import render
-# from django.http import HttpResponseRedirect, HttpResponse
-# from django.contrib.auth.models import User
-# from django.shortcuts import get_object_or_404, render, redirect
-# from django.contrib.auth import logout
-# from django.contrib import messages
-# from datetime import datetime
+from django.shortcuts import render
+from django.http import HttpResponseRedirect, HttpResponse
+from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404, render, redirect
+from django.contrib.auth import logout
+from django.contrib import messages
+from datetime import datetime
 
 from django.http import JsonResponse
 from django.contrib.auth import login, authenticate
 import logging
 import json
 from django.views.decorators.csrf import csrf_exempt
-# from .populate import initiate
+from .populate import initiate
 
 
 # Get an instance of a logger
@@ -39,13 +39,52 @@ def login_user(request):
     return JsonResponse(data)
 
 # Create a `logout_request` view to handle sign out request
-# def logout_request(request):
-# ...
+def logout_request(request):
+    logout(request)
+    return JsonResponse({"userName" : ""})
 
 # Create a `registration` view to handle sign up request
-# @csrf_exempt
-# def registration(request):
-# ...
+@csrf_exempt
+def registration(request):
+
+    data = json.loads(request.body)
+    
+    username = data['userName']
+    password = data['password']
+    first_name = data['firstName']
+    last_name = data['lastName']
+    email = data['email']
+
+    username_exists = False
+    email_exists = False
+    # check if user exists
+    try:
+        User.objects.get(username=username)
+        username_exists = True
+    except:
+        logger.debug(f"{username} is a new username")
+
+    try:
+        User.objects.get(email=email)
+        email_exists = True
+    except:
+        logger.debug(f"{email} is a new email")
+    
+    if username_exists:
+        return JsonResponse({"userName" : username, "error" : "This username is already taken"}, status=400)
+    
+    if email_exists:
+        return JsonResponse({"email" : email, "error" : "This email is already taken"}, status=400)
+    
+    new_user = User.objects.create_user(username=username, email=email, password=password,
+                                        first_name=first_name, last_name=last_name)
+    
+    login(request, new_user)
+    return JsonResponse({"userName":username,"status":"Authenticated"})
+
+
+
+
 
 # # Update the `get_dealerships` view to render the index page with
 # a list of dealerships
