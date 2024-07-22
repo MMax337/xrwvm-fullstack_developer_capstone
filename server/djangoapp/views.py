@@ -1,12 +1,12 @@
 # Uncomment the required imports before adding the code
 
-from django.shortcuts import render
-from django.http import HttpResponseRedirect, HttpResponse
+# from django.shortcuts import render
+# from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404, render, redirect
+# from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import logout
-from django.contrib import messages
-from datetime import datetime
+# from django.contrib import messages
+# from datetime import datetime
 
 from django.http import JsonResponse
 from django.contrib.auth import login, authenticate
@@ -14,7 +14,8 @@ import logging
 import json
 from django.views.decorators.csrf import csrf_exempt
 
-from .restapis import get_request, analyze_review_sentiments, post_review
+from .restapis import get_request, post_review
+# from .restapis import analyze_review_sentiments
 from .populate import initiate
 
 from .models import CarMake, CarModel
@@ -69,23 +70,31 @@ def registration(request):
     try:
         User.objects.get(username=username)
         username_exists = True
-    except:
+    except Exception as err:
+        print(f"{err=},  type: {type(err)}")
         logger.debug(f"{username} is a new username")
 
     try:
         User.objects.get(email=email)
         email_exists = True
-    except:
+    except Exception as err:
+        print(f"{err=},  type: {type(err)}")
         logger.debug(f"{email} is a new email")
 
     if username_exists:
-        return JsonResponse({"userName": username, "error": "This username is already taken"}, status=400)
+        return JsonResponse({"userName": username, 
+                             "error": "This username is already taken"
+                            }, status=400)
 
     if email_exists:
-        return JsonResponse({"email": email, "error": "This email is already taken"}, status=400)
+        return JsonResponse({"email": email,
+                             "error": "This email is already taken"
+                            }, status=400)
 
-    new_user = User.objects.create_user(username=username, email=email, password=password,
-                                        first_name=first_name, last_name=last_name)
+    new_user = User.objects.create_user(username=username, email=email, 
+                                        password=password, 
+                                        first_name=first_name, 
+                                        last_name=last_name)
 
     login(request, new_user)
     return JsonResponse({"userName": username, "status": "Authenticated"})
@@ -132,7 +141,10 @@ def get_dealer_reviews(request, dealer_id):
             # response = analyze_review_sentiments(review_detail['review'])
             response = {'sentiment': 'unkown'}
             if response is None:
-                return JsonResponse({"status": 500, "message": "Sentiment Analyzer does not work"})
+                return JsonResponse({"status": 500, 
+                                     "message": 
+                                     "Sentiment Analyzer does not work"
+                                    })
 
             review_detail['sentiment'] = response['sentiment']
 
@@ -156,12 +168,16 @@ def get_dealer_details(request, dealer_id):
 
 
 def add_review(request):
-    if (request.user.is_anonymous == False):
+    if not request.user.is_anonymous:
         data = json.loads(request.body)
         try:
             response = post_review(data)
+            print(response)
             return JsonResponse({"status": 200})
-        except:
-            return JsonResponse({"status": 401, "message": "Error in posting review"})
+        except Exception as err:
+            print(f"{err=},  type: {type(err)}")
+            return JsonResponse({"status": 401,
+                                 "message": "Error in posting review"
+                                })
     else:
         return JsonResponse({"status": 403, "message": "Unauthorized"})
