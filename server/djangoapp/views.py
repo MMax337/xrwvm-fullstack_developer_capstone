@@ -82,18 +82,18 @@ def registration(request):
         logger.debug(f"{email} is a new email")
 
     if username_exists:
-        return JsonResponse({"userName": username, 
+        return JsonResponse({"userName": username,
                              "error": "This username is already taken"
-                            }, status=400)
+                             }, status=400)
 
     if email_exists:
         return JsonResponse({"email": email,
                              "error": "This email is already taken"
-                            }, status=400)
+                             }, status=400)
 
-    new_user = User.objects.create_user(username=username, email=email, 
-                                        password=password, 
-                                        first_name=first_name, 
+    new_user = User.objects.create_user(username=username, email=email,
+                                        password=password,
+                                        first_name=first_name,
                                         last_name=last_name)
 
     login(request, new_user)
@@ -141,10 +141,10 @@ def get_dealer_reviews(request, dealer_id):
             # response = analyze_review_sentiments(review_detail['review'])
             response = {'sentiment': 'unkown'}
             if response is None:
-                return JsonResponse({"status": 500, 
-                                     "message": 
+                return JsonResponse({"status": 500,
+                                     "message":
                                      "Sentiment Analyzer does not work"
-                                    })
+                                     })
 
             review_detail['sentiment'] = response['sentiment']
 
@@ -178,6 +178,6 @@ def add_review(request):
             print(f"{err=},  type: {type(err)}")
             return JsonResponse({"status": 401,
                                  "message": "Error in posting review"
-                                })
+                                 })
     else:
         return JsonResponse({"status": 403, "message": "Unauthorized"})
